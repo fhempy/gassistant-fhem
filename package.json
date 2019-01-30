@@ -1,0 +1,25 @@
+{
+  "name": "gassistant-fhem",
+  "version": "1.0.6",
+  "description": "Connect Google Assistant to FHEM",
+  "bin": {
+    "gassistant-fhem": "./bin/gassistant-fhem"
+  },
+  "keywords": [
+    "fhem",
+    "google",
+    "google assistant",
+    "google action"
+  ],
+  "author": "Dominik Karall",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "commander": "^2.19.0",
+    "firebase": "^5.8.1",
+    "node-fetch": "^2.3.0",
+    "readline-sync": "^1.4.9",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  }
+}
