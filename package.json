@@ -14,6 +14,7 @@
   "author": "Dominik Karall",
   "license": "ISC",
   "dependencies": {
+    "api-npm": "^1.0.0",
     "chalk": "^2.4.1",
     "commander": "^2.19.0",
     "firebase": "^5.8.1",
