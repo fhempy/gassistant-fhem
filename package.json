@@ -1,6 +1,6 @@
 {
   "name": "gassistant-fhem",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Connect Google Assistant to FHEM",
   "bin": {
     "gassistant-fhem": "./bin/gassistant-fhem"
