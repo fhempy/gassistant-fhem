@@ -8,10 +8,25 @@
 
 process.title = 'fhem-connect';
 
+var npid = require('npid');
+
 // Find the HomeBridge lib
 const path = require('path');
 const fs = require('fs');
 const lib = path.join(path.dirname(fs.realpathSync(__filename)), '../lib');
+
+try {
+  var pid = npid.create('/tmp/gassistant-fhem.pid');
+  pid.removeOnExit();
+} catch (err) {
+  console.log("###############################################################");
+  console.log("Can't create PID file /tmp/gassistant-fhem.pid");
+  console.log("Please check if gassistant-fhem is already running.");
+  console.log("Delete PID file ONLY if gassistant-fhem is NOT running!");
+  console.log("###############################################################");
+  console.log(err);
+  process.exit(1);
+}
 
 // Run HomeBridge
 require(lib + '/cli')();

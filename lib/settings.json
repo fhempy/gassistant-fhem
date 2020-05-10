@@ -4,8 +4,8 @@
   "CLIENT_ID": "EI0TI2Y0W1743Ico53Nvsg1FsmoZniCC",
   "AUTH0_DOMAIN": "https://fhemconnector.eu.auth0.com",
   "AUDIENCE_URI": "https://europe-west1-fhem-ga-connector.cloudfunctions.net/",
-  "HOSTING_URL": "https://fhem-ga-connector.firebaseapp.com/4.0/",
-  "CLIENT_VERSION": "4.0",
+  "HOSTING_URL": "https://fhem-ga-connector.firebaseapp.com/5.0/",
+  "CLIENT_VERSION": "5.0",
 
   "firebase":{
     "apiKey": "AIzaSyAUVHzmzhwOfjZ39yu9fjh3fDxn2LtyDvM",
