@@ -8,26 +8,35 @@
 
 process.title = 'fhem-connect';
 
-var npid = require('npid');
+var ps = require('ps-node');
 
 // Find the HomeBridge lib
 const path = require('path');
 const fs = require('fs');
 const lib = path.join(path.dirname(fs.realpathSync(__filename)), '../lib');
 
-try {
-  var pid = npid.create('/tmp/gassistant-fhem.pid');
-  pid.removeOnExit();
-} catch (err) {
-  console.log("###############################################################");
-  console.log("Can't create PID file /tmp/gassistant-fhem.pid");
-  console.log("Please check if gassistant-fhem is already running.");
-  console.log("Delete PID file ONLY if gassistant-fhem is NOT running!");
-  console.log("###############################################################");
-  console.log(err);
-  process.exit(1);
-}
+ps.lookup({
+  command: 'node',
+  arguments: 'gassistant-fhem',
+  psargs: '-efa',
+}, function (err, resultList) {
+  if (err) {
+    throw new Error(err);
+  }
 
-// Run HomeBridge
-require(lib + '/cli')();
+  var processFound = false;
+  resultList.forEach(function (process) {
+    if (process) {
+      console.log("###############################################################");
+      console.log("Another gassistant-fhem process is running!");
+      console.log('PID: %s, COMMAND: %s, ARGUMENTS: %s', process.pid, process.command, process.arguments);
+      console.log("###############################################################");
+      processFound = true;
+    }
+  });
 
+  if (!processFound) {
+    // Run HomeBridge
+    require(lib + '/cli')();
+  }
+});
