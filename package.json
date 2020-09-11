@@ -1,6 +1,6 @@
 {
   "name": "gassistant-fhem",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Connect Google Assistant to FHEM",
   "bin": {
     "gassistant-fhem": "./bin/gassistant-fhem"
@@ -18,13 +18,13 @@
     "bonjour": "^3.5.0",
     "commander": "^5.1.0",
     "express": "^4.17.1",
-    "firebase": "^7.14.4",
-    "grpc": "^1.24.2",
-    "node-fetch": "^2.3.0",
+    "firebase": "^7.19.1",
+    "grpc": "^1.24.3",
+    "node-fetch": "^2.6.1",
     "ps-node": "^0.1.6",
     "readline-sync": "^1.4.9",
     "request": "^2.88.2",
-    "request-promise": "^4.2.2",
+    "request-promise": "^4.2.6",
     "sync-request": "^6.1.0",
     "vm2": "^3.9.2"
   }
