@@ -1,13 +1,10 @@
-
 {
   "CLOUD_FUNCTIONS_BASE": "https://europe-west1-fhem-ga-connector.cloudfunctions.net",
   "CLIENT_ID": "EI0TI2Y0W1743Ico53Nvsg1FsmoZniCC",
   "AUTH0_DOMAIN": "https://fhemconnector.eu.auth0.com",
   "AUDIENCE_URI": "https://europe-west1-fhem-ga-connector.cloudfunctions.net/",
-  "HOSTING_URL": "https://fhem-ga-connector.firebaseapp.com/5.0/",
   "CLIENT_VERSION": "5.0",
-
-  "firebase":{
+  "firebase": {
     "apiKey": "AIzaSyAUVHzmzhwOfjZ39yu9fjh3fDxn2LtyDvM",
     "authDomain": "fhem-ga-connector.firebaseapp.com",
     "databaseURL": "https://fhem-ga-connector.firebaseio.com",
