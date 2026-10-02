@@ -31,7 +31,9 @@ test('client starts and requests login', { timeout: 30000 }, async function () {
   fs.mkdirSync(path.join(home, '.fhemconnect'));
   fs.writeFileSync(path.join(home, '.fhemconnect', 'gassistant-fhem.cfg'), JSON.stringify(config));
 
-  const child = spawn(process.execPath, [path.join(__dirname, '..', 'bin', 'gassistant-fhem')], {
+  // start the CLI directly, bin/gassistant-fhem would refuse to start if a real client is running
+  const cli = path.join(__dirname, '..', 'lib', 'cli');
+  const child = spawn(process.execPath, ['-e', 'require(' + JSON.stringify(cli) + ')()'], {
     env: Object.assign({}, process.env, { HOME: home })
   });
   let output = '';
