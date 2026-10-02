@@ -52,6 +52,15 @@ npm test
 
 ## Changelog
 
+### 4.0.1
+- Fixed: Local Home (`gassistant-fhem-localHome`) stayed inactive:
+  - requests with many devices were rejected (100 kB limit)
+  - the mDNS SRV target was not a valid `.local` host name
+  - the reading fell back to `inactive` after 5 minutes
+- REACHABLE_DEVICES works without the deprecated `devices` field of the request.
+- New reading `gassistant-fhem-localHomeDevices` with the number of devices reachable locally,
+  every Local Home request is logged.
+
 ### 4.0.0
 - The client code is part of the npm package now. Before, it was downloaded from
   Firebase Hosting on every start and executed with vm2 (which has known sandbox escapes).
