@@ -1,42 +1,53 @@
 #!/usr/bin/env node
 
 //
-// This executable sets up the environment and runs the HomeBridge CLI.
+// This executable sets up the environment and runs the gassistant-fhem CLI.
 //
 
 'use strict';
 
-process.title = 'fhem-connect';
+const PROCESS_TITLE = 'fhem-connect';
 
-var ps = require('ps-node');
+process.title = PROCESS_TITLE;
 
-// Find the HomeBridge lib
 const path = require('path');
 const fs = require('fs');
+const { execFileSync } = require('child_process');
 const lib = path.join(path.dirname(fs.realpathSync(__filename)), '../lib');
 
-ps.lookup({
-  command: 'node',
-  arguments: 'gassistant-fhem',
-  psargs: '-efa',
-}, function (err, resultList) {
-  if (err) {
-    throw new Error(err);
+// Running instances show up as "fhem-connect" (process.title) or, while starting
+// or where the title can't be set, as "node .../gassistant-fhem ...".
+function findOtherInstances() {
+  if (process.platform === 'win32')
+    return [];
+
+  let out;
+  try {
+    out = execFileSync('ps', ['-eo', 'pid=,args='], { encoding: 'utf8' });
+  } catch (err) {
+    return [];
   }
 
-  var processFound = false;
-  resultList.forEach(function (process) {
-    if (process) {
-      console.log("###############################################################");
-      console.log("Another gassistant-fhem process is running!");
-      console.log('PID: %s, COMMAND: %s, ARGUMENTS: %s', process.pid, process.command, process.arguments);
-      console.log("###############################################################");
-      processFound = true;
-    }
+  return out.split('\n').map(function (line) {
+    const m = line.trim().match(/^(\d+)\s+(.*)$/);
+    return m ? { pid: parseInt(m[1]), args: m[2] } : undefined;
+  }).filter(function (p) {
+    if (!p || p.pid === process.pid)
+      return false;
+    if (p.args.trim() === PROCESS_TITLE)
+      return true;
+    return /^\S*node(js)?\s+\S*gassistant-fhem(\s|$)/.test(p.args);
   });
+}
 
-  if (!processFound) {
-    // Run HomeBridge
-    require(lib + '/cli')();
-  }
-});
+const others = findOtherInstances();
+if (others.length > 0) {
+  others.forEach(function (p) {
+    console.log("###############################################################");
+    console.log("Another gassistant-fhem process is running!");
+    console.log('PID: %s, COMMAND: %s', p.pid, p.args);
+    console.log("###############################################################");
+  });
+} else {
+  require(lib + '/cli')();
+}

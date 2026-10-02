@@ -1,9 +1,23 @@
 {
   "name": "gassistant-fhem",
-  "version": "3.0.5",
+  "version": "4.0.0",
   "description": "Connect Google Assistant to FHEM",
   "bin": {
     "gassistant-fhem": "./bin/gassistant-fhem"
+  },
+  "files": [
+    "bin/",
+    "lib/"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fhempy/gassistant-fhem.git"
   },
   "keywords": [
     "fhem",
@@ -14,18 +28,9 @@
   "author": "Dominik Karall",
   "license": "ISC",
   "dependencies": {
-    "api-npm": "^1.0.0",
-    "bonjour": "^3.5.0",
-    "commander": "^5.1.0",
-    "express": "^4.17.1",
-    "firebase": "^7.19.1",
-    "grpc": "^1.24.3",
-    "node-fetch": "^2.6.1",
-    "ps-node": "^0.1.6",
-    "readline-sync": "^1.4.9",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.6",
-    "sync-request": "^6.1.0",
-    "vm2": "3.9.2"
+    "bonjour-service": "^1.4.4",
+    "commander": "^14.0.0",
+    "express": "^5.2.1",
+    "firebase": "^12.19.0"
   }
 }

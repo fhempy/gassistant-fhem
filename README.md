@@ -2,3 +2,70 @@
 Connect FHEM to the FHEM Connect addon in your Google Home app.
 
 See https://wiki.fhem.de/wiki/Google_Assistant_FHEM_Connect
+
+## Requirements
+
+- Node.js 20 or newer
+- FHEM with a `gassistant` device (`define gassistant gassistant`)
+
+## Installation
+
+```
+sudo npm install -g gassistant-fhem
+```
+
+## Usage
+
+```
+gassistant-fhem [options]
+
+  -D, --debug          turn on debug level logging
+  -c, --config <path>  location of the config file (default: ~/.fhemconnect/gassistant-fhem.cfg)
+  -a, --auth <auth>    user:password for FHEM connection
+  -s, --ssl            use https for FHEM connection
+```
+
+The config file is created with default values on first start:
+
+```json
+{
+  "connections": [{
+    "name": "FHEM",
+    "server": "127.0.0.1",
+    "port": "8083",
+    "webname": "fhem",
+    "filter": "room=GoogleAssistant",
+    "auth": { "user": "fhemuser", "pass": "secret" },
+    "ssl": false
+  }]
+}
+```
+
+`auth` and `ssl` are optional.
+
+## Development
+
+```
+npm install
+npm test
+```
+
+## Changelog
+
+### 4.0.0
+- The client code is part of the npm package now. Before, it was downloaded from
+  Firebase Hosting on every start and executed with vm2 (which has known sandbox escapes).
+- Requires Node.js 20 or newer.
+- Dependencies updated: firebase 12 (modular API), express 5, commander 14,
+  bonjour-service instead of bonjour. request, request-promise, node-fetch, sync-request,
+  vm2, grpc, api-npm, ps-node and readline-sync were removed.
+- Fixed: Local Home did not fall back to another port if 37000 was in use.
+- Fixed: Unregister always failed because the access token was deleted before the request.
+- Fixed: FHEM readings were not set to `disconnected` on shutdown.
+- Fixed: Client crashed on network errors during token refresh, report state or heartbeat.
+- Fixed: Passwords from the connection config were written to the log.
+- Fixed: Basic auth from one connection was used for other connections without auth.
+- Fixed: Passwords containing `:` were cut off for `--auth`.
+- Fixed: Detection of an already running instance did not work.
+- Fixed: Firestore batch limit was exceeded when deleting more than 500 devices.
+- Fixed: Default config could not be written if `~/.fhemconnect` did not exist.
