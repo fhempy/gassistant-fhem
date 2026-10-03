@@ -52,6 +52,10 @@ npm test
 
 ## Changelog
 
+### 4.0.2
+- Fixed: `not a number: undefined => NaN` errors in the log when a mapped reading doesn't exist
+  (e.g. `color` of zigbee2mqtt lights).
+
 ### 4.0.1
 - Fixed: Local Home (`gassistant-fhem-localHome`) stayed inactive:
   - requests with many devices were rejected (100 kB limit)

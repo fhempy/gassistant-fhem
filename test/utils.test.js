@@ -33,3 +33,20 @@ test('cached2Format evaluates reading2homekit functions from the server', async 
   assert.strictEqual(await utils.cached2Format('uid', dev.device.mappings.On, { state: 'an' }), true);
   assert.ok(!('mapping' in global), 'no global leak');
 });
+
+test('cached2Format ignores missing readings for reading2homekit functions', async function () {
+  const errors = [];
+  const origError = console.error;
+  console.error = (msg) => errors.push(String(msg));
+  try {
+    // e.g. MQTT2_DEVICE with "set color" but without reading "color"
+    const rgb = { reading: ['color'], reading2homekit: function (mapping, orig) { return parseInt('0x' + orig); } };
+    assert.strictEqual(await utils.cached2Format('uid', rgb, { state: 'on' }), undefined);
+    assert.strictEqual(await utils.cached2Format('uid', rgb, { color: 'ff0000' }), 0xff0000);
+    rgb.default = 0;
+    assert.strictEqual(await utils.cached2Format('uid', rgb, { state: 'on' }), 0);
+  } finally {
+    console.error = origError;
+  }
+  assert.deepStrictEqual(errors, [], 'no error is logged');
+});
