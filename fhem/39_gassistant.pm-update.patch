@@ -1,0 +1,40 @@
+--- a/FHEM/39_gassistant.pm
++++ b/FHEM/39_gassistant.pm
+@@ -476,7 +476,7 @@
+ {
+   my ($hash, $name, $cmd, @args) = @_;
+ 
+-  my $list = "authcode refreshToken createDefaultConfig:noArg clearCredentials:noArg unregister:noArg reload:noArg";
++  my $list = "authcode refreshToken createDefaultConfig:noArg clearCredentials:noArg unregister:noArg reload:noArg update";
+ 
+   if( $cmd eq 'reload' ) {
+     $hash->{".triggerUsed"} = 1;
+@@ -489,6 +489,16 @@
+ 
+     return undef;
+ 
++  } elsif( $cmd eq 'update' ) {
++    my $version = $args[0] // 'latest';
++    return "usage: set $name $cmd [version]" if( $version !~ m/^[0-9A-Za-z][0-9A-Za-z.+-]*$/ );
++
++    # gassistant-fhem installs the version with npm and restarts itself with 'set $name restart'
++    $hash->{".triggerUsed"} = 1;
++    DoTrigger( $name, "update: $version" );
++
++    return undef;
++
+   } elsif( $cmd eq 'createDefaultConfig' ) {
+     my $force = 0;
+     $force = 1 if( $args[0] && $args[0] eq 'force' );
+@@ -766,6 +776,11 @@
+       Reloads the devices and sends them to Google.
+       </li>
+ 
++    <li>update [version]<br>
++      Updates gassistant-fhem with npm (default: latest version) and restarts it.
++      The npm of the Node.js installation running gassistant-fhem is used.
++      The progress is shown in the reading gassistant-fhem-update.</li>
++
+     <li>createDefaultConfig<br>
+     creates a default gassistant-fhem.cfg file
+     gassistantFHEM-config attribut if not already set.</li>
