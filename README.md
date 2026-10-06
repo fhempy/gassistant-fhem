@@ -43,6 +43,25 @@ The config file is created with default values on first start:
 
 `auth` and `ssl` are optional.
 
+## Update
+
+From FHEM (the version is optional, default is the latest version):
+
+```
+set gassistant update [version]
+```
+
+With a `39_gassistant.pm` which doesn't know `set ... update` yet (see `fhem/39_gassistant.pm-update.patch`):
+
+```
+trigger gassistant update: latest
+```
+
+gassistant-fhem installs the new version with the npm of the Node.js installation it is running on
+(also nvm installations) and is restarted by FHEM afterwards. The progress is shown in the reading
+`gassistant-fhem-update`. The global npm directory must be writable for the FHEM user, otherwise
+update manually as root: `npm install -g gassistant-fhem`.
+
 ## Development
 
 ```
@@ -51,6 +70,9 @@ npm test
 ```
 
 ## Changelog
+
+### 4.1.0
+- Update from FHEM: `set gassistant update [version]` or `trigger gassistant update: latest`.
 
 ### 4.0.3
 - Fewer Report State calls (lower Cloud Function costs): unchanged states are not reported again,
