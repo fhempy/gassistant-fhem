@@ -52,6 +52,10 @@ npm test
 
 ## Changelog
 
+### 4.0.3
+- Fewer Report State calls (lower Cloud Function costs): unchanged states are not reported again,
+  changes within one second are sent together in one request.
+
 ### 4.0.2
 - Fixed: `not a number: undefined => NaN` errors in the log when a mapped reading doesn't exist
   (e.g. `color` of zigbee2mqtt lights).
