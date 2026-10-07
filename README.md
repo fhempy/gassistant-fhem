@@ -71,6 +71,11 @@ npm test
 
 ## Changelog
 
+### 4.1.2
+- Google SYNC only if the devices changed (name, room, mappings, ...) since the last SYNC. A restart
+  or reconnect with unchanged devices doesn't request a SYNC any more, a room change requests one
+  SYNC instead of two. `set gassistant reload` still always requests a SYNC.
+
 ### 4.1.1
 - FHEM events are processed faster: changed readings are written to the Realtime Database without
   waiting for the confirmation (~100-150 ms per reading). Report state reaches Google earlier when
