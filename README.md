@@ -71,6 +71,11 @@ npm test
 
 ## Changelog
 
+### 4.1.1
+- FHEM events are processed faster: changed readings are written to the Realtime Database without
+  waiting for the confirmation (~100-150 ms per reading). Report state reaches Google earlier when
+  many readings change at once.
+
 ### 4.1.0
 - Update from FHEM: `set gassistant update [version]` or `trigger gassistant update: latest`.
 
