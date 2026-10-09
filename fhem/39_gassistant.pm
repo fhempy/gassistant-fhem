@@ -464,7 +464,11 @@ gassistant_installRun($)
   my ($string) = @_;
   my ($name, $dir, $version) = split( /\|/, $string, 3 );
 
-  my $result = eval { gassistant_installSteps($dir, $version) };
+  # low CPU and IO priority, FHEM and the running gassistant-fhem should not be slowed down
+  setpriority( 0, 0, 19 );
+  system( "ionice -c2 -n7 -p $$ >/dev/null 2>&1" ) if( qx(command -v ionice 2>/dev/null) );
+
+  my $result = eval { gassistant_installSteps($name, $dir, $version) };
   if( $@ ) {
     my $err = $@;
     $err =~ s/[\r\n|]+/ /g;
@@ -475,9 +479,9 @@ gassistant_installRun($)
 }
 
 sub
-gassistant_installSteps($$)
+gassistant_installSteps($$$)
 {
-  my ($dir, $version) = @_;
+  my ($name, $dir, $version) = @_;
 
   my $q = sub { my $s = shift; $s =~ s/'/'\\''/g; return "'$s'" };
 
@@ -485,6 +489,11 @@ gassistant_installSteps($$)
   my $log = "$dir/install.log";
   open( my $fh, '>', $log ) or die "can't write $log: $!\n";
   close( $fh );
+  my $progress = sub {
+    my ($msg) = @_;
+    open( my $l, '>>', $log ); print $l '# '. localtime() ." $msg\n"; close( $l );
+    BlockingInformParent( 'gassistant_installProgress', [$name, $msg], 0 );
+  };
   my $run = sub {
     my ($cmd, $err) = @_;
     open( my $l, '>>', $log ); print $l "\$ $cmd\n"; close( $l );
@@ -515,6 +524,7 @@ gassistant_installSteps($$)
   chomp( $current );
 
   # latest Node.js of the major version
+  $progress->( "checking Node.js $gassistant_nodeMajor..." );
   my ($latest, $url);
   eval {
     if( $official{$dist} ) {
@@ -544,6 +554,7 @@ gassistant_installSteps($$)
   my $target = $node;
   if( $latest && $current ne $latest->{version} ) {
     my $file = "$dir/tmp/node-$latest->{version}-$dist.tar.gz";
+    $progress->( "downloading Node.js $latest->{version}..." );
     $get->( "$url/$latest->{version}/node-$latest->{version}-$dist.tar.gz", $file );
 
     require Digest::SHA;
@@ -551,6 +562,7 @@ gassistant_installSteps($$)
     die "checksum of $file is wrong\n" if( $sha ne $latest->{sha} );
 
     $target = "$dir/node.new";
+    $progress->( "extracting Node.js $latest->{version}..." );
     $run->( 'rm -rf '. $q->($target) .' '. $q->("$dir/tmp/x") .' && mkdir -p '. $q->("$dir/tmp/x") .
             ' && tar -xzf '. $q->($file) .' -C '. $q->("$dir/tmp/x") .
             ' && mv '. $q->("$dir/tmp/x/node-$latest->{version}-$dist") .' '. $q->($target), "extracting Node.js failed" );
@@ -559,10 +571,11 @@ gassistant_installSteps($$)
   # gassistant-fhem as global package of the own Node.js (also updates from FHEM work with it)
   local $ENV{'npm_config_update_notifier'} = 'false';
   local $ENV{'NODE_ENV'} = 'production';
+  $progress->( "installing gassistant-fhem\@$version with npm (can take several minutes)..." );
   my $ok = eval {
     $run->( $q->("$target/bin/node") .' '. $q->("$target/lib/node_modules/npm/bin/npm-cli.js") .
             ' install -g --prefix '. $q->($target) .' '. $q->("gassistant-fhem\@$version") .
-            ' --no-audit --no-fund', "npm install gassistant-fhem\@$version failed" );
+            ' --no-audit --no-fund --maxsockets=4', "npm install gassistant-fhem\@$version failed" );
     1;
   };
   if( !$ok ) {
@@ -589,6 +602,16 @@ gassistant_installSteps($$)
   my $warn = $err ? " (Node.js update check failed: $err)" : '';
   $warn =~ s/[\r\n|]+/ /g;
   return "$nodeVersion|$gaVersion|$warn";
+}
+
+sub
+gassistant_installProgress($$)
+{
+  my ($name, $msg) = @_;
+  my $hash = $defs{$name};
+  return if( !$hash );
+
+  readingsSingleUpdate($hash, 'gassistant-fhem-install', $msg, 1 );
 }
 
 sub

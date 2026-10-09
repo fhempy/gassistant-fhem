@@ -15,7 +15,8 @@ With the `39_gassistant.pm` of `fhem/` (not yet in FHEM SVN) nothing has to be i
 `~/.fhemconnect/runtime` of the FHEM user (needs `curl` or `wget`, no root rights, independent of the
 Node.js version of the system). Existing global installations are switched automatically: the global
 installation is used until the local installation is finished, then gassistant-fhem is restarted.
-The progress is shown in the reading `gassistant-fhem-install`, details in
+The installation runs with low CPU and IO priority, on a Raspberry Pi it takes a few minutes. The
+progress is shown in the reading `gassistant-fhem-install`, details in
 `~/.fhemconnect/runtime/install.log`.
 
 Global installation (`attr gassistant gassistantFHEM-runtime system`, older `39_gassistant.pm`):
@@ -92,6 +93,12 @@ npm test
 ```
 
 ## Changelog
+
+### 4.1.3
+- Network errors during the login at startup (e.g. Firebase `auth/network-request-failed`, Auth0
+  `server_error`) are retried (10 s, 20 s, ... up to 5 minutes). Before, gassistant-fhem stayed
+  disconnected with `login failed, please retry` until it was restarted manually. An invalid refresh
+  token still requires a new login.
 
 ### 4.1.2
 - Google SYNC only if the devices changed (name, room, mappings, ...) since the last SYNC. A restart
