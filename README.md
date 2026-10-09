@@ -10,6 +10,16 @@ See https://wiki.fhem.de/wiki/Google_Assistant_FHEM_Connect
 
 ## Installation
 
+With the `39_gassistant.pm` of `fhem/` (not yet in FHEM SVN) nothing has to be installed manually:
+`define gassistant gassistant` installs gassistant-fhem with an own Node.js 22 in
+`~/.fhemconnect/runtime` of the FHEM user (needs `curl` or `wget`, no root rights, independent of the
+Node.js version of the system). Existing global installations are switched automatically: the global
+installation is used until the local installation is finished, then gassistant-fhem is restarted.
+The progress is shown in the reading `gassistant-fhem-install`, details in
+`~/.fhemconnect/runtime/install.log`.
+
+Global installation (`attr gassistant gassistantFHEM-runtime system`, older `39_gassistant.pm`):
+
 ```
 sudo npm install -g gassistant-fhem
 ```
@@ -51,16 +61,28 @@ From FHEM (the version is optional, default is the latest version):
 set gassistant update [version]
 ```
 
-With a `39_gassistant.pm` which doesn't know `set ... update` yet (see `fhem/39_gassistant.pm-update.patch`):
+With the local installation (default of the `39_gassistant.pm` of `fhem/`) the module installs the
+version and restarts gassistant-fhem, Node.js is updated to the latest 22.x as well. The progress is
+shown in the reading `gassistant-fhem-install`.
+
+With a global installation gassistant-fhem installs the new version with the npm of the Node.js
+installation it is running on (also nvm installations) and is restarted by FHEM afterwards. The
+progress is shown in the reading `gassistant-fhem-update`. The global npm directory must be writable
+for the FHEM user, otherwise update manually as root: `npm install -g gassistant-fhem`.
+With a `39_gassistant.pm` which doesn't know `set ... update` yet:
 
 ```
 trigger gassistant update: latest
 ```
 
-gassistant-fhem installs the new version with the npm of the Node.js installation it is running on
-(also nvm installations) and is restarted by FHEM afterwards. The progress is shown in the reading
-`gassistant-fhem-update`. The global npm directory must be writable for the FHEM user, otherwise
-update manually as root: `npm install -g gassistant-fhem`.
+## FHEM module
+
+`fhem/39_gassistant.pm` is the `39_gassistant.pm` of FHEM SVN (rev 18283) with these changes,
+`fhem/39_gassistant.pm.patch` contains the same changes as patch:
+
+- local installation of gassistant-fhem and Node.js (`gassistantFHEM-runtime`)
+- `set gassistant update [version]`
+- `gassistantFHEM-log`: custom log file names work (#14)
 
 ## Development
 
