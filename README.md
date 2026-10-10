@@ -10,7 +10,7 @@ See https://wiki.fhem.de/wiki/Google_Assistant_FHEM_Connect
 
 ## Installation
 
-With the `39_gassistant.pm` of `fhem/` (not yet in FHEM SVN) nothing has to be installed manually:
+With the current `39_gassistant.pm` of FHEM (`update` in FHEM) nothing has to be installed manually:
 `define gassistant gassistant` installs gassistant-fhem with an own Node.js 22 in
 `~/.fhemconnect/runtime` of the FHEM user (needs `curl` or `wget`, no root rights, independent of the
 Node.js version of the system). Existing global installations are switched automatically: the global
@@ -62,7 +62,7 @@ From FHEM (the version is optional, default is the latest version):
 set gassistant update [version]
 ```
 
-With the local installation (default of the `39_gassistant.pm` of `fhem/`) the module installs the
+With the local installation (default of the current `39_gassistant.pm`) the module installs the
 version and restarts gassistant-fhem, Node.js is updated to the latest 22.x as well. The progress is
 shown in the reading `gassistant-fhem-install`.
 
@@ -78,8 +78,8 @@ trigger gassistant update: latest
 
 ## FHEM module
 
-`fhem/39_gassistant.pm` is the `39_gassistant.pm` of FHEM SVN (rev 18283) with these changes,
-`fhem/39_gassistant.pm.patch` contains the same changes as patch:
+The FHEM module `39_gassistant.pm` is maintained in FHEM SVN and installed with `update` in FHEM.
+The current version supports:
 
 - local installation of gassistant-fhem and Node.js (`gassistantFHEM-runtime`)
 - `set gassistant update [version]`
